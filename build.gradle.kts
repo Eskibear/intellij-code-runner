@@ -1,40 +1,56 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-  id("java")
-  id("org.jetbrains.kotlin.jvm") version "1.9.24"
-  id("org.jetbrains.intellij") version "1.17.3"
+  java
+  idea
+  kotlin("jvm") version "2.1.10"
+  id("org.jetbrains.intellij.platform") version "2.1.0"
 }
 
 group = "io.github.eskibear"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0-SNAPSHOT.1"
+
+val javaVersion = "17"
 
 repositories {
+  maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+  mavenLocal()
   mavenCentral()
+  intellijPlatform {
+    defaultRepositories()
+    marketplace()
+  }
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-  version.set("2023.2.6")
-  type.set("IC") // Target IDE Platform
-
-  plugins.set(listOf(
-    "org.jetbrains.plugins.terminal"
-  ))
+dependencies {
+  intellijPlatform {
+    create("IC", "2023.2.8")
+    bundledPlugins(
+        "org.jetbrains.plugins.terminal"
+    )
+    instrumentationTools()
+    testFramework(TestFrameworkType.Platform)
+    pluginVerifier()
+  }
 }
 
 tasks {
-  // Set the JVM compatibility versions
-  withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+
+  compileJava {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
   }
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+
+  compileKotlin {
+    compilerOptions {
+      jvmTarget.set(JvmTarget.fromTarget(javaVersion))
+    }
   }
 
   patchPluginXml {
     sinceBuild.set("232")
-    untilBuild.set("242.*")
+    untilBuild.set("251.*")
   }
 
   signPlugin {
