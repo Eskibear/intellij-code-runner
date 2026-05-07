@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
   intellijPlatform {
-    create("IC", "2023.2.8")
+    create("IC", "2024.1.7")
     bundledPlugins(
         "org.jetbrains.plugins.terminal"
     )
@@ -49,7 +49,7 @@ tasks {
   }
 
   patchPluginXml {
-    sinceBuild.set("232")
+    sinceBuild.set("241")
     untilBuild.set("251.*")
   }
 

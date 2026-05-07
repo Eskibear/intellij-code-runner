@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.plugins.terminal.TerminalToolWindowManager
-import java.io.IOException
 import java.util.*
 
 class RunCodeAction : AnAction() {
@@ -39,17 +38,13 @@ class RunCodeAction : AnAction() {
                 else String.format("%s %s", executor, virtualFile.canonicalPath)
 
             val manager = TerminalToolWindowManager.getInstance(project)
-            try {
-                manager.createLocalShellWidget(
-                    null,
-                    "Code Runner",
-                    true,
-                    true
-                )
-                    .executeCommand(command)
-            } catch (e: IOException) {
-                throw RuntimeException(e)
-            }
+            manager.createShellWidget(
+                null,
+                "Code Runner",
+                true,
+                true
+            )
+                .sendCommandToExecute(command)
         }
     }
 
